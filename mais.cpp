@@ -103,8 +103,13 @@ char checkFlag(int mat[4][4]) {
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
             if (mat[i][j] == 0) {
-                return 'T';
-            }else if ((i > 0 && mat[i][j] == mat[i-1][j]) ||
+                return 'Z';
+            }
+        }
+    }
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            if ((i > 0 && mat[i][j] == mat[i-1][j]) ||
                         (i < 3 && mat[i][j] == mat[i+1][j]) ||
                         (j > 0 && mat[i][j] == mat[i][j-1]) ||
                         (j < 3 && mat[i][j] == mat[i][j+1])) {
@@ -220,10 +225,12 @@ int main() {
     memset(mat, 0, sizeof(mat));
     memset(aux, 0, sizeof(aux));
 
-    while (flag == 'T') {
+    while (flag != 'F') {
         memcpy(old, aux, sizeof(mat));
         memcpy(aux, mat, sizeof(mat));
-        addNum(mat, &maxP);
+        if(flag == 'Z'){
+            addNum(mat, &maxP);
+        }
         printMatrix(mat);
         mov = getch();
 
