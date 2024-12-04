@@ -221,6 +221,17 @@ void addNum(int mat[4][4], int *maxP) {
 
 int main() {
     int mat[4][4], old[4][4], aux[4][4], maxP = 0;
+    int record; //read from file
+    FILE *file;
+    if ((file = fopen("record.txt", "r")) == NULL) {
+        file = fopen("record.txt", "w");
+        fprintf(file, "%d", 0);
+        record = 0;
+        fclose(file);
+    } else {
+        fscanf(file, "%d", &record);
+        fclose(file);
+    }
     char mov, flag = 'T';
     memset(mat, 0, sizeof(mat));
     memset(aux, 0, sizeof(aux));
@@ -230,6 +241,12 @@ int main() {
         memcpy(aux, mat, sizeof(mat));
         if(flag == 'Z'){
             addNum(mat, &maxP);
+        }
+        if(maxP > record){
+            record = maxP;
+            file = fopen("record.txt", "w");
+            fprintf(file, "%d", record);
+            fclose(file);
         }
         printMatrix(mat);
         mov = getch();
@@ -257,6 +274,6 @@ int main() {
     }
 
     cout << "Sua pontuacao foi: " << maxP << endl;
-
+    cout << "Seu record eh: " << record << endl;
     return 0;
 }
