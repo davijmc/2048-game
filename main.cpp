@@ -232,7 +232,7 @@ int main() {
         fscanf(file, "%d", &record);
         fclose(file);
     }
-    char mov, flag = 'T';
+    char mov, flag = 'Z';
     memset(mat, 0, sizeof(mat));
     memset(aux, 0, sizeof(aux));
 
