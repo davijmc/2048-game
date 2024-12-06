@@ -3,6 +3,7 @@
 #include <ctime>
 #include <iomanip>
 #include <conio.h>
+#include <vector>
 
 using namespace std;
 
@@ -99,6 +100,7 @@ void undo(int mat[4][4], int old[4][4]) {
     memcpy(mat, old, sizeof(int) * 16);  // Copiar o estado antigo da matriz
 }
 
+/*
 char checkFlag(int mat[4][4]) {
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
@@ -119,6 +121,7 @@ char checkFlag(int mat[4][4]) {
     }
     return 'F';
 }
+*/
 
 // Função para imprimir a matriz
 void printMatrix(int mat[4][4]) {
@@ -132,38 +135,26 @@ void printMatrix(int mat[4][4]) {
 }
 
 // Função para adicionar um número à matriz
-/*
 char addNum(int mat[4][4], int *maxP) {
-    int vetLin[4] = {0, 1, 2, 3};
-    int vetCol[4] = {0, 1, 2, 3};
-    int ctrl = 4, ctrc = 4;
+    vector<int> lin = {0, 1, 2, 3};
+    vector<int> col = {0, 1, 2, 3};
+    char flag = 'F';
+    int ctrl = 4, ctrc = 4, x, y;
     unsigned seed = time(NULL);
     srand(seed);
 
     while (1) {
         for (int k = 0; k < 4; k++) {
-            int lin = rand() % ctrl;
-            lin = vetLin[lin];
-            for (int i = 0; i < ctrl; i++) {
-                if (vetLin[i] == lin) {
-                    vetLin[i] = vetLin[i+1];
-                    vetLin[i+1] = lin;
-                }
-            }
+            int rlin = rand() % ctrl;
             ctrl--;
-
-            for (int j = 0; j < 4; j++) {
-                int col = rand() % ctrc;
-                col = vetCol[col];
-                for (int i = 0; i < ctrc; i++) {
-                    if (vetCol[i] == col) {
-                        vetCol[i] = vetCol[i+1];
-                        vetCol[i+1] = col;
-                    }
-                }
+            x = lin.at(rlin);
+            lin.erase(lin.begin() + rlin);
+            for(int i = 0; i < 4; i++) {
+                int rcol = rand() % ctrc;
                 ctrc--;
-
-                if (mat[lin][col] == 0) {
+                y = col.at(rcol);
+                col.erase(col.begin() + rcol);
+                if (mat[x][y] == 0) {
                     int sum = 0, rnd;
                     rnd = rand() % 100;
                     if (*maxP > 2048) {
@@ -173,25 +164,27 @@ char addNum(int mat[4][4], int *maxP) {
                             sum = (rnd > 75) ? 4 : 2;
                         }
                     } else {
-                        sum = (rnd > 90) ? 4 : 2;
+                        sum = (rnd > 95) ? 4 : 2;
                     }
 
-                    mat[lin][col] = sum;
+                    mat[x][y] = sum;
                     *maxP += sum;
                     return 'T';
-                } else if ((lin > 0 && mat[lin][col] == mat[lin-1][col]) ||
-                           (lin < 3 && mat[lin][col] == mat[lin+1][col]) ||
-                           (col > 0 && mat[lin][col] == mat[lin][col-1]) ||
-                           (col < 3 && mat[lin][col] == mat[lin][col+1])) {
-                    return 'T';
+                } else if ((x > 0 && mat[x][y] == mat[x-1][y]) ||
+                            (x < 3 && mat[x][y] == mat[x+1][y]) ||
+                            (y > 0 && mat[x][y] == mat[x][y-1]) ||
+                            (y < 3 && mat[x][y] == mat[x][y+1])){
+                    flag = 'T';
                 }
             }
             ctrc = 4;
+            col = {0, 1, 2, 3};
         }
-        return 'F';
+        return flag;
     }
 }
-*/
+
+/*
 void addNum(int mat[4][4], int *maxP) {
     char teste = 'F';
     unsigned seed = time(NULL);
@@ -218,6 +211,7 @@ void addNum(int mat[4][4], int *maxP) {
     }
     }
 }
+*/
 
 int main() {
     int mat[4][4], old[4][4], aux[4][4], maxP = 0;
@@ -239,9 +233,10 @@ int main() {
     while (flag != 'F') {
         memcpy(old, aux, sizeof(mat));
         memcpy(aux, mat, sizeof(mat));
-        if(flag == 'Z'){
+        /*if(flag == 'Z'){
             addNum(mat, &maxP);
-        }
+        }*/
+        flag = addNum(mat, &maxP);
         if(maxP > record){
             record = maxP;
             file = fopen("record.txt", "w");
@@ -270,7 +265,7 @@ int main() {
             default:
                 break;
         }
-        flag = checkFlag(mat);
+        //flag = checkFlag(mat);
     }
 
     cout << "Sua pontuacao foi: " << maxP << endl;
